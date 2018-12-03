@@ -36,7 +36,7 @@ class Calendar extends React.Component {
     const dateFormat = "dddd";
     const days = [];
 
-    let startDate = dateFns.startOfWeek(this.state.currentMonth);
+    let startDate = dateFns.startOfWeek(this.state.currentMonth, { weekStartsOn: 1 });
 
     for (let i = 0; i < 7; i++) {
       days.push(
@@ -49,17 +49,13 @@ class Calendar extends React.Component {
     return <div className="days row">{days}</div>;
   }
 
-  dateInInterval = day => {
-    console.log(this.state)
-    return dateFns.isWithinRange(day, this.state.selectedDate, this.state.endSelectedDate)
-  }
-  
+  dateInInterval = day => dateFns.isWithinRange(day, this.state.selectedDate, this.state.endSelectedDate)
 
   renderCells() {
     const { currentMonth, selectedDate } = this.state;
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
-    const startDate = dateFns.startOfWeek(monthStart);
+    const startDate = dateFns.startOfWeek(monthStart, { weekStartsOn: 1 });
     const endDate = dateFns.endOfWeek(monthEnd);
 
     const dateFormat = "D";
@@ -77,8 +73,8 @@ class Calendar extends React.Component {
         days.push(
           <div
             className={`col cell ${
-              !dateFns.isSameMonth(day, monthStart)
-                ? "disabled"
+              !dateFns.isSameMonth(day, monthStart) 
+                ? ((dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart))  ? "weekend" : "disabled" )
                 : this.dateInInterval(cloneDay) ? "selected" : ""
               }`}
             key={day}
@@ -86,6 +82,11 @@ class Calendar extends React.Component {
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
+            {(!dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart)) &&
+              <div className="projects">
+                <div>HEMS</div>
+                <div>CDS</div>
+              </div>}
           </div>
         );
         day = dateFns.addDays(day, 1);
@@ -110,7 +111,7 @@ class Calendar extends React.Component {
       });
     } else {
       let endDay = day;
-      if(this.state.selectedDate > day){
+      if (this.state.selectedDate > day) {
         endDay = this.state.selectedDate;
         this.setState({
           selectedDate: day
