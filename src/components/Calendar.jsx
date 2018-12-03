@@ -4,8 +4,13 @@ import dateFns from "date-fns";
 class Calendar extends React.Component {
   state = {
     currentMonth: new Date(),
-    selectedDate: new Date()
+    selectedDate: new Date(),
+    endSelectedDate: new Date(),
   };
+
+  componentDidMount() {
+    this.clearTimer();
+  }
 
   renderHeader() {
     const dateFormat = "MMMM YYYY";
@@ -44,6 +49,12 @@ class Calendar extends React.Component {
     return <div className="days row">{days}</div>;
   }
 
+  dateInInterval = day => {
+    console.log(this.state)
+    return dateFns.isWithinRange(day, this.state.selectedDate, this.state.endSelectedDate)
+  }
+  
+
   renderCells() {
     const { currentMonth, selectedDate } = this.state;
     const monthStart = dateFns.startOfMonth(currentMonth);
@@ -62,13 +73,14 @@ class Calendar extends React.Component {
       for (let i = 0; i < 7; i++) {
         formattedDate = dateFns.format(day, dateFormat);
         const cloneDay = day;
+
         days.push(
           <div
             className={`col cell ${
               !dateFns.isSameMonth(day, monthStart)
                 ? "disabled"
-                : dateFns.isSameDay(day, selectedDate) ? "selected" : ""
-            }`}
+                : this.dateInInterval(cloneDay) ? "selected" : ""
+              }`}
             key={day}
             onClick={() => this.onDateClick(dateFns.parse(cloneDay))}
           >
@@ -89,10 +101,46 @@ class Calendar extends React.Component {
   }
 
   onDateClick = day => {
-    this.setState({
-      selectedDate: day
-    });
+    if (this.timerID === null) {
+      this.setTimer();
+
+      this.setState({
+        selectedDate: day,
+        endSelectedDate: day
+      });
+    } else {
+      let endDay = day;
+      if(this.state.selectedDate > day){
+        endDay = this.state.selectedDate;
+        this.setState({
+          selectedDate: day
+        });
+      }
+
+      this.setState({
+        endSelectedDate: endDay
+      });
+
+      this.clearTimer();
+    }
   };
+
+  setTimer = () => {
+    this.timerID = setInterval(
+      () => {
+        this.clearTimer();
+      },
+      5000
+    );
+  }
+
+  clearTimer = () => {
+    if (this.timerID) {
+      clearInterval(this.timerID);
+    }
+
+    this.timerID = null;
+  }
 
   nextMonth = () => {
     this.setState({
