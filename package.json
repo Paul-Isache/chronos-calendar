@@ -9,7 +9,7 @@
     },
     "main": "./demo/src/lib/Calendar.js",
     "scripts": {
-        "build": "webpack"
+        "build": "export NODE_ENV=production && webpack"
     },
     "peerDependencies": {
         "prop-types": "^15.6.0",
@@ -24,6 +24,7 @@
         "babel-preset-stage-0": "^6.24.1",
         "css-loader": "^2.0.0",
         "date-fns": "^1.29.0",
+        "mini-css-extract-plugin": "^0.5.0",
         "path": "^0.12.7",
         "prop-types": "^15.6.0",
         "react": "^16.0.0",
