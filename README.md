@@ -1,1 +1,1 @@
-React Calendar Component for npm
+React Chronos Calendar Component
