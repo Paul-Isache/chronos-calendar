@@ -31,7 +31,7 @@ class Calendar extends React.Component {
           <div className="icon">chevron_right</div>
         </div>
       </div>
-    );
+    )
   }
 
   renderDays() {
@@ -45,7 +45,7 @@ class Calendar extends React.Component {
         <div className="col col-center" key={i}>
           {dateFns.format(dateFns.addDays(startDate, i), dateFormat)}
         </div>
-      );
+      )
     }
 
     return <div className="days row">{days}</div>;
@@ -80,11 +80,7 @@ class Calendar extends React.Component {
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
-            {(!dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart)) &&
-              <div className="projects">
-                <div>HEMS</div>
-                <div>CDS</div>
-              </div>}
+            {typeof this.props.renderOnDate === 'function' && this.props.renderOnDate(cloneDay)}
           </div>
         );
         day = dateFns.addDays(day, 1);
@@ -99,7 +95,7 @@ class Calendar extends React.Component {
     return <div className="body">{rows}</div>;
   }
 
-  getClass =  day => !dateFns.isSameMonth(day, monthStart)
+  getClass = day => !dateFns.isSameMonth(day, monthStart)
     ? ((dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart)) ? "weekend" : "disabled")
     : this.dateInInterval(cloneDay) ? "selected" : "";
 
@@ -115,37 +111,23 @@ class Calendar extends React.Component {
       let endDay = day;
       if (this.state.selectedDate > day) {
         endDay = this.state.selectedDate;
-        this.setState({
-          selectedDate: day
-        });
+        this.setState({ selectedDate: day });
       }
 
-      this.setState({
-        endSelectedDate: endDay
-      });
+      this.setState({ endSelectedDate: endDay });
 
       this.clearTimer();
     }
 
-    if (typeof this.props.onDateClick === 'function') {
-      this.props.onDateClick({ startDate: selectedDate, endDate: endSelectedDate })
-    }
+    typeof this.props.onDateClick === 'function' && this.props.onDateClick({ startDate: this.state.selectedDate, endDate: this.state.endSelectedDate })
   };
 
   setTimer = () => {
-    this.timerID = setInterval(
-      () => {
-        this.clearTimer();
-      },
-      5000
-    );
+    this.timerID = setTimeout(() => this.clearTimer(), 5000);
   }
 
   clearTimer = () => {
-    if (this.timerID) {
-      clearInterval(this.timerID);
-    }
-
+    this.timerID && clearTimeout(this.timerID);
     this.timerID = null;
   }
 
