@@ -74,11 +74,7 @@ class Calendar extends React.Component {
 
         days.push(
           <div
-            className={`col cell ${
-              !dateFns.isSameMonth(day, monthStart) 
-                ? ((dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart))  ? "weekend" : "disabled" )
-                : this.dateInInterval(cloneDay) ? "selected" : ""
-              }`}
+            className={`col cell ${getClass(day)}`}
             key={day}
             onClick={() => this.onDateClick(dateFns.parse(cloneDay))}
           >
@@ -103,6 +99,10 @@ class Calendar extends React.Component {
     return <div className="body">{rows}</div>;
   }
 
+  getClass =  day => !dateFns.isSameMonth(day, monthStart)
+    ? ((dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart)) ? "weekend" : "disabled")
+    : this.dateInInterval(cloneDay) ? "selected" : "";
+
   onDateClick = day => {
     if (this.timerID === null) {
       this.setTimer();
@@ -125,6 +125,10 @@ class Calendar extends React.Component {
       });
 
       this.clearTimer();
+    }
+
+    if (typeof this.props.onDateClick === 'function') {
+      this.props.onDateClick({ startDate: selectedDate, endDate: endSelectedDate })
     }
   };
 
