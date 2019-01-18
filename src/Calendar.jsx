@@ -4,18 +4,18 @@ import dateFns from "date-fns";
 import "./Calendar.css";
 
 class Calendar extends React.Component {
-  state = {
-    currentMonth: new Date(),
-    selectedDate: new Date(),
-    endSelectedDate: new Date(),
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {
-    this.clearTimer();
+    this.state = {
+      currentMonth: this.props.currentDate,
+      selectedStartDate: new Date(),
+      selectedEndDate: new Date(),
+    };
   }
-
+  
   renderHeader() {
-    const dateFormat = "MMMM YYYY";
+    const dateFormat = 'MMMM YYYY';
 
     return (
       <div className="header row flex-middle">
@@ -31,11 +31,11 @@ class Calendar extends React.Component {
           <div className="icon">chevron_right</div>
         </div>
       </div>
-    );
+    )
   }
 
   renderDays() {
-    const dateFormat = "dddd";
+    const dateFormat = 'dddd';
     const days = [];
 
     let startDate = dateFns.startOfWeek(this.state.currentMonth, { weekStartsOn: 1 });
@@ -45,16 +45,16 @@ class Calendar extends React.Component {
         <div className="col col-center" key={i}>
           {dateFns.format(dateFns.addDays(startDate, i), dateFormat)}
         </div>
-      );
+      )
     }
 
     return <div className="days row">{days}</div>;
   }
 
-  dateInInterval = day => dateFns.isWithinRange(day, this.state.selectedDate, this.state.endSelectedDate)
+  dateInInterval = day => dateFns.isWithinRange(day, this.state.selectedStartDate, this.state.selectedEndDate)
 
   renderCells() {
-    const { currentMonth, selectedDate } = this.state;
+    const { currentMonth } = this.state;
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
     const startDate = dateFns.startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -74,21 +74,13 @@ class Calendar extends React.Component {
 
         days.push(
           <div
-            className={`col cell ${
-              !dateFns.isSameMonth(day, monthStart) 
-                ? ((dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart))  ? "weekend" : "disabled" )
-                : this.dateInInterval(cloneDay) ? "selected" : ""
-              }`}
+            className={`col cell ${this.isWeeekend(day)} ${this.getClass(day, monthStart)}`}
             key={day}
-            onClick={() => this.onDateClick(dateFns.parse(cloneDay))}
+            onClick={() => this.onDateClick(cloneDay)}
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
-            {(!dateFns.isWeekend(cloneDay) && dateFns.isSameMonth(day, monthStart)) &&
-              <div className="projects">
-                <div>HEMS</div>
-                <div>CDS</div>
-              </div>}
+            {typeof this.props.renderOnDate === 'function' && this.props.renderOnDate(day)}
           </div>
         );
         day = dateFns.addDays(day, 1);
@@ -103,58 +95,48 @@ class Calendar extends React.Component {
     return <div className="body">{rows}</div>;
   }
 
+  isWeeekend = (day) => dateFns.isWeekend(day) && 'weekend';
+
+  getClass = (day, monthStart) => {
+    if (!dateFns.isSameMonth(day, monthStart) || this.props.disabledDates.map(item => item.toISOString()).includes(day.toISOString())) {
+      return 'disabled';
+    }
+
+    if (this.dateInInterval(day)) {
+      return 'selected';
+    }
+
+    return '';
+  }
+
   onDateClick = day => {
-    if (this.timerID === null) {
+    if (!this.timerID) {
       this.setTimer();
 
       this.setState({
-        selectedDate: day,
-        endSelectedDate: day
+        selectedStartDate: day, selectedEndDate: day
       });
-    } else {
-      let endDay = day;
-      if (this.state.selectedDate > day) {
-        endDay = this.state.selectedDate;
-        this.setState({
-          selectedDate: day
-        });
-      }
-
-      this.setState({
-        endSelectedDate: endDay
-      });
-
-      this.clearTimer();
-    }
+    } else day < this.state.selectedStartDate ?
+      this.setState({ selectedStartDate: day, selectedEndDate: this.state.selectedStartDate }, () => this.clearTimer()) :
+      this.setState({ selectedEndDate: day }, () => this.clearTimer());
   };
 
   setTimer = () => {
-    this.timerID = setInterval(
-      () => {
-        this.clearTimer();
-      },
-      5000
-    );
+    this.timerID = setTimeout(() => this.clearTimer(), 1000);
   }
 
   clearTimer = () => {
-    if (this.timerID) {
-      clearInterval(this.timerID);
-    }
-
+    this.timerID && clearTimeout(this.timerID);
     this.timerID = null;
+    typeof this.props.onDateClick === 'function' && this.props.onDateClick({ startDate: this.state.selectedStartDate, endDate: this.state.selectedEndDate })
   }
 
   nextMonth = () => {
-    this.setState({
-      currentMonth: dateFns.addMonths(this.state.currentMonth, 1)
-    });
+    this.setState({ currentMonth: dateFns.addMonths(this.state.currentMonth, 1) });
   };
 
   prevMonth = () => {
-    this.setState({
-      currentMonth: dateFns.subMonths(this.state.currentMonth, 1)
-    });
+    this.setState({ currentMonth: dateFns.subMonths(this.state.currentMonth, 1) });
   };
 
   render() {
@@ -166,6 +148,10 @@ class Calendar extends React.Component {
       </div>
     );
   }
+}
+
+Calendar.defaultProps = {
+  currentDate: new Date()
 }
 
 export default Calendar;
