@@ -1,7 +1,7 @@
 import React from "react";
 
-import Calendar from "./lib/Calendar";
-import "./lib/Calendar.css";
+import Calendar from 'chronos-calendar';
+import '../node_modules/chronos-calendar/build/Calendar.css';
 
 class App extends React.Component {
   render() {

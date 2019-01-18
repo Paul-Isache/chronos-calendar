@@ -1,24 +1,27 @@
 {
     "name": "chronos-calendar",
     "author": "Your Name <email@example.com> (http://example.com)",
-    "contributors": [{
+    "contributors": [
+        {
             "name": "Paul Isache",
             "email": "paul@isache.com",
             "url": "https://isache.com"
-        }, {
+        },
+        {
             "name": "George Chetreanu",
             "email": "chetreanu.george@gmail.com",
             "url": "http://georgechetreanu.github.io"
         }
     ],
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "React Calendar Component for npm",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/Paul-Isache/chronos-calendar"
     },
-    "main": "./demo/src/lib/Calendar.js",
+    "files": [ "./build/*"],
+    "main": "./build/Calendar.js",
     "scripts": {
         "build": "export NODE_ENV=production && webpack"
     },
@@ -33,15 +36,15 @@
         "babel-preset-env": "^1.6.1",
         "babel-preset-react": "^6.16.0",
         "babel-preset-stage-0": "^6.24.1",
-        "css-loader": "^2.0.0",
+        "css-loader": "^2.1.0",
         "date-fns": "^1.29.0",
         "mini-css-extract-plugin": "^0.5.0",
         "path": "^0.12.7",
         "prop-types": "^15.6.0",
-        "react": "^16.0.0",
-        "react-dom": "^16.0.0",
-        "webpack": "^4.20.2",
-        "webpack-cli": "^3.1.1"
+        "react": "^16.7.0",
+        "react-dom": "^16.7.0",
+        "webpack": "^4.28.4",
+        "webpack-cli": "^3.2.1"
     },
     "dependencies": {
         "style-loader": "^0.23.1"

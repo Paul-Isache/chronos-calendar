@@ -13,7 +13,7 @@ class Calendar extends React.Component {
       selectedEndDate: new Date(),
     };
   }
-  
+
   renderHeader() {
     const dateFormat = 'MMMM YYYY';
 
@@ -151,7 +151,8 @@ class Calendar extends React.Component {
 }
 
 Calendar.defaultProps = {
-  currentDate: new Date()
+  currentDate: new Date(),
+  disabledDates: []
 }
 
 export default Calendar;
