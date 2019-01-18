@@ -38,47 +38,6 @@ http://moodydev.io
   --neutral-color: #fff;
 }
 
-/* GENERAL */
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  font-size: 1em;
-  font-weight: 300;
-  line-height: 1.5;
-  color: var(--text-color);
-  background: var(--bg-color);
-}
-
-header {
-  display: block;
-  width: 100%;
-  padding: 1.75em 0;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--neutral-color);
-}
-
-header #logo {
-  font-size: 175%;
-  text-align: center;
-  color: var(--main-color);
-  line-height: 1;
-}
-
-header #logo .icon {
-  padding-right: 0.25em;
-}
-
-main {
-  display: block;
-  margin: 0 auto;
-  margin-top: 5em;
-  max-width: 50em;
-}
-
 /* GRID */
 
 .row {
@@ -118,11 +77,22 @@ main {
 /* Calendar */
 
 .calendar {
+  font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-size: 1em;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text-color);
+  background: var(--bg-color);
+
   display: block;
   position: relative;
   width: 100%;
   background: var(--neutral-color);
   border: 1px solid var(--border-color);
+}
+
+.calendar * {
+  box-sizing: border-box;
 }
 
 .calendar .header {
@@ -177,9 +147,9 @@ main {
 }
 
 .calendar .body .selected {
-  /* border-left: 10px solid transparent;
+  border-left: 10px solid transparent;
   border-image: linear-gradient(45deg, #1a8fff 0%, #53cbf1 40%);
-  border-image-slice: 1; */
+  border-image-slice: 1;
 }
 
 .calendar .body .row {
@@ -238,26 +208,3 @@ main {
   flex-direction: column;
 
 }
-
-.calendar .body .col.weekend {
-  background: rgba(0,0,0,0.1);
-}
-
-.calendar .body .col .projects div:nth-child(1) {
-  background-color: rgba(127, 255, 212, 1);
-  transition: 0.25s ease-out;
-}
-
-.calendar .body .col.selected .projects div:nth-child(1) {
-  background-color: rgba(127, 255, 212, 0.3);
-}
-
-.calendar .body .col .projects div:nth-child(2) {
-  background-color: rgba(255, 144, 0, 1);
-  transition: 0.25s ease-out;
-}
-
-.calendar .body .col.selected .projects div:nth-child(2) {
-  background-color: rgba(255, 144, 0, 0.3);
-}
-

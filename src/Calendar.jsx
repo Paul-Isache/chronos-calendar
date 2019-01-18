@@ -9,16 +9,11 @@ class Calendar extends React.Component {
 
     this.state = {
       currentMonth: this.props.currentDate,
-      selectedDate: new Date(),
-      endSelectedDate: new Date(),
+      selectedStartDate: new Date(),
+      selectedEndDate: new Date(),
     };
   }
-
-
-  componentDidMount() {
-    this.clearTimer();
-  }
-
+  
   renderHeader() {
     const dateFormat = 'MMMM YYYY';
 
@@ -56,10 +51,10 @@ class Calendar extends React.Component {
     return <div className="days row">{days}</div>;
   }
 
-  dateInInterval = day => dateFns.isWithinRange(day, this.state.selectedDate, this.state.endSelectedDate)
+  dateInInterval = day => dateFns.isWithinRange(day, this.state.selectedStartDate, this.state.selectedEndDate)
 
   renderCells() {
-    const { currentMonth, selectedDate } = this.state;
+    const { currentMonth } = this.state;
     const monthStart = dateFns.startOfMonth(currentMonth);
     const monthEnd = dateFns.endOfMonth(monthStart);
     const startDate = dateFns.startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -81,11 +76,11 @@ class Calendar extends React.Component {
           <div
             className={`col cell ${this.isWeeekend(day)} ${this.getClass(day, monthStart)}`}
             key={day}
-            onClick={() => this.onDateClick(dateFns.parse(cloneDay))}
+            onClick={() => this.onDateClick(cloneDay)}
           >
             <span className="number">{formattedDate}</span>
             <span className="bg">{formattedDate}</span>
-            {typeof this.props.renderOnDate === 'function' && this.props.renderOnDate(cloneDay)}
+            {typeof this.props.renderOnDate === 'function' && this.props.renderOnDate(day)}
           </div>
         );
         day = dateFns.addDays(day, 1);
@@ -103,7 +98,7 @@ class Calendar extends React.Component {
   isWeeekend = (day) => dateFns.isWeekend(day) && 'weekend';
 
   getClass = (day, monthStart) => {
-    if (!dateFns.isSameMonth(day, monthStart)) {
+    if (!dateFns.isSameMonth(day, monthStart) || this.props.disabledDates.map(item => item.toISOString()).includes(day.toISOString())) {
       return 'disabled';
     }
 
@@ -115,47 +110,33 @@ class Calendar extends React.Component {
   }
 
   onDateClick = day => {
-    if (this.timerID === null) {
+    if (!this.timerID) {
       this.setTimer();
 
       this.setState({
-        selectedDate: day,
-        endSelectedDate: day
+        selectedStartDate: day, selectedEndDate: day
       });
-    } else {
-      let endDay = day;
-      if (this.state.selectedDate > day) {
-        endDay = this.state.selectedDate;
-        this.setState({ selectedDate: day });
-      }
-
-      this.setState({ endSelectedDate: endDay });
-
-      this.clearTimer();
-    }
-
-    typeof this.props.onDateClick === 'function' && this.props.onDateClick({ startDate: this.state.selectedDate, endDate: this.state.endSelectedDate })
+    } else day < this.state.selectedStartDate ?
+      this.setState({ selectedStartDate: day, selectedEndDate: this.state.selectedStartDate }, () => this.clearTimer()) :
+      this.setState({ selectedEndDate: day }, () => this.clearTimer());
   };
 
   setTimer = () => {
-    this.timerID = setTimeout(() => this.clearTimer(), 5000);
+    this.timerID = setTimeout(() => this.clearTimer(), 1000);
   }
 
   clearTimer = () => {
     this.timerID && clearTimeout(this.timerID);
     this.timerID = null;
+    typeof this.props.onDateClick === 'function' && this.props.onDateClick({ startDate: this.state.selectedStartDate, endDate: this.state.selectedEndDate })
   }
 
   nextMonth = () => {
-    this.setState({
-      currentMonth: dateFns.addMonths(this.state.currentMonth, 1)
-    });
+    this.setState({ currentMonth: dateFns.addMonths(this.state.currentMonth, 1) });
   };
 
   prevMonth = () => {
-    this.setState({
-      currentMonth: dateFns.subMonths(this.state.currentMonth, 1)
-    });
+    this.setState({ currentMonth: dateFns.subMonths(this.state.currentMonth, 1) });
   };
 
   render() {
@@ -169,8 +150,8 @@ class Calendar extends React.Component {
   }
 }
 
-export default Calendar;
-
 Calendar.defaultProps = {
-  currentDate: new Date(),
-};
+  currentDate: new Date()
+}
+
+export default Calendar;
