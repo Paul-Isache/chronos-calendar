@@ -92,7 +92,8 @@ http://moodydev.io
   border: 1px solid var(--border-color);
 }
 
-.calendar * {
+.calendar 
+* {
   box-sizing: border-box;
 }
 
@@ -208,4 +209,26 @@ http://moodydev.io
   display: flex;
   flex-direction: column;
 
+}
+
+.calendar .body .col.weekend {
+  background: rgba(0,0,0,0.1);
+}
+
+.calendar .body .col .projects div:nth-child(1) {
+  background-color: rgba(127, 255, 212, 1);
+  transition: 0.25s ease-out;
+}
+
+.calendar .body .col.selected .projects div:nth-child(1) {
+  background-color: rgba(127, 255, 212, 0.3);
+}
+
+.calendar .body .col .projects div:nth-child(2) {
+  background-color: rgba(255, 144, 0, 1);
+  transition: 0.25s ease-out;
+}
+
+.calendar .body .col.selected .projects div:nth-child(2) {
+  background-color: rgba(255, 144, 0, 0.3);
 }

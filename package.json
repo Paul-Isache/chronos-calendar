@@ -13,17 +13,19 @@
             "url": "http://georgechetreanu.github.io"
         }
     ],
-    "version": "0.1.1",
+    "version": "1.0.0",
     "description": "React Calendar Component for npm",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/Paul-Isache/chronos-calendar"
     },
-    "files": [ "./build/*"],
+    "files": [
+        "./build/*"
+    ],
     "main": "./build/Calendar.js",
     "scripts": {
-        "build": "export NODE_ENV=production && webpack"
+        "build": "set NODE_ENV=production && webpack"
     },
     "peerDependencies": {
         "prop-types": "^15.6.0",
